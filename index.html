@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abishek R | Comprehensive Urban Planner Portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Leaf Green, White, and Gold Architectural Palette */
+            --bg-deep: #eef3f0;          /* Soft leaf mist background */
+            --bg-surface: #d8e4dc;       /* Mid-tone leaf accent structure */
+            --card-base: #ffffff;        /* Pure crisp alabaster white */
+            --accent-ivy: #2c4c38;       /* Deep ivy green for primary headers */
+            --text-main: #192e22;        /* High-contrast charcoal green */
+            --text-sub: #41594b;         /* Muted leaf-shade green */
+            --luxury-gold: #cda226;      /* Bright leaf gold */
+            --border-line: rgba(44, 76, 56, 0.15);
+            
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ---------------------------------
+           CORE SETUP & COMET CURSOR
+        --------------------------------- */
+        * {
+            box-sizing: border-box;
+            cursor: none !important; /* Forces custom cursor globally */
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.8;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Geometric Structural Overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(44, 76, 56, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(44, 76, 56, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Comet Cursor Elements */
+        .comet {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: var(--luxury-gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 15px var(--luxury-gold), 0 0 30px var(--luxury-gold);
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        .comet-tail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: rgba(205, 162, 38, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.12s linear;
+        }
+        .comet.hover-active {
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            border: 2px solid var(--luxury-gold);
+            box-shadow: 0 0 10px rgba(205, 162, 38, 0.5);
+        }
+
+        /* ---------------------------------
+           ANIMATIONS & TRANSITIONS
+        --------------------------------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* ---------------------------------
+           NAVIGATION & HERO
+        --------------------------------- */
+        nav {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 35px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-crest {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: var(--accent-ivy);
+            letter-spacing: 3px;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+        .logo-crest span {
+            font-size: 0.75rem;
+            border: 1px solid var(--accent-ivy);
+            padding: 3px 10px;
+            border-radius: 2px;
+            margin-left: 8px;
+            letter-spacing: 1px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: float 6s ease-in-out infinite;
+        }
+        .hero-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--luxury-gold);
+            letter-spacing: 3px;
+            border: 1px solid var(--luxury-gold);
+            padding: 8px 24px;
+            border-radius: 40px;
+            background: var(--card-base);
+            display: inline-block;
+            margin-bottom: 30px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(44, 76, 56, 0.05);
+        }
+        header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--accent-ivy);
+            line-height: 1.1;
+        }
+        header p {
+            font-size: 1.25rem;
+            color: var(--text-sub);
+            max-width: 900px;
+            margin: 25px auto 35px auto;
+            font-weight: 400;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-ivy);
+            letter-spacing: 3px;
+            margin: 100px 0 40px 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--luxury-gold), transparent);
+        }
+
+        /* ---------------------------------
+           GRID SYSTEMS & CARDS
+        --------------------------------- */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+
+        .card {
+            background: var(--card-base);
+            border: 1px solid var(--border-line);
+            border-radius: 16px;
+            padding: 35px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 10px 30px rgba(44, 76, 56, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: var(--luxury-gold);
+            box-shadow: 0 20px 40px rgba(205, 162, 38, 0.1);
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--luxury-gold);
+            transform: scaleY(0);
+            transition: var(--transition-smooth);
+            transform-origin: top;
+        }
+        .card:hover::before { transform: scaleY(1); }
+
+        .card h3 { margin: 0 0 15px 0; font-size: 1.35rem; color: var(--accent-ivy); font-weight: 700; }
+        .card p { margin: 0 0 20px 0; font-size: 0.95rem; color: var(--text-sub); }
+
+        /* Project Image Cards */
+        .project-card { padding: 0; display: flex; flex-direction: column; }
+        .project-img-frame {
+            height: 180px;
+            background: linear-gradient(135deg, var(--bg-surface), var(--bg-deep));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-ivy);
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-line);
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            transition: var(--transition-smooth);
+        }
+        .project-card:hover .project-img-frame {
+            background: var(--accent-ivy);
+            color: var(--luxury-gold);
+        }
+        .project-info { padding: 25px; flex-grow: 1; }
+
+        /* Tag Clusters */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .tag {
+            background: var(--bg-deep);
+            border: 1px solid var(--border-line);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--accent-ivy);
+            font-weight: 600;
+            transition: var(--transition-smooth);
+        }
+        .card:hover .tag { border-color: rgba(205, 162, 38, 0.3); }
+
+        /* Links & Buttons */
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 2px solid var(--luxury-gold);
+            padding-bottom: 3px;
+            transition: var(--transition-smooth);
+            margin-top: auto;
+        }
+        .btn-link:hover { color: var(--luxury-gold); padding-left: 8px; }
+
+        .btn-gold {
+            display: inline-flex;
+            align-items: center;
+            background: transparent;
+            color: var(--luxury-gold);
+            border: 1px solid var(--luxury-gold);
+            padding: 15px 40px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(205, 162, 38, 0.05);
+            text-transform: uppercase;
+        }
+        .btn-gold:hover {
+            background: var(--luxury-gold);
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(205, 162, 38, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* Footer Panel */
+        .contact-panel {
+            background: radial-gradient(circle at top right, var(--bg-surface), var(--card-base));
+            padding: 80px 40px;
+            text-align: center;
+            border-radius: 20px;
+            border: 1px solid var(--border-line);
+            box-shadow: 0 20px 50px rgba(44, 76, 56, 0.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            border-top: 1px solid var(--border-line);
+            margin-top: 100px;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="comet" id="comet"></div>
+    <div class="comet-tail" id="comet-tail"></div>
+
+    <nav class="reveal">
+        <a href="#" class="logo-crest interactive">🏛️ ABISHEK R <span>B.PLAN CANDIDATE</span></a>
+        <div style="display: flex; gap: 20px;">
+            <a href="https://www.linkedin.com/in/abishek-ra" target="_blank" class="btn-link interactive">LinkedIn</a>
+        </div>
+    </nav>
+
+    <header class="reveal">
+        <div class="hero-badge">Advanced Urban Planning & Spatial Sciences</div>
+        <h1>URBAN PLANNING & METRICS</h1>
+        <p>Undergraduate student at the School of Architecture and Planning, Anna University, Chennai. Specializing in highly complex automated GIS modeling, strategic real estate feasibility, advanced LiDAR analytics, and regional structural frameworks. Deeply passionate about integrating AI architectures with traditional smart city operations.</p>
+        <a href="#contact" class="btn-gold interactive" style="margin-top: 20px;">Engage Profile</a>
+    </header>
+
+    <div class="container">
+        
+        <div class="section-title reveal">Academic Overview</div>
+        <div class="card reveal" style="padding: 40px;">
+            <h3 style="font-size: 1.5rem;">🏢 School of Architecture and Planning, Anna University, Chennai</h3>
+            <p style="font-size: 1.1rem; color: var(--text-main);"><strong>Degree Track:</strong> Bachelor of Planning (B.Plan — Urban & Regional Infrastructure Planning)</p>
+            <p><strong>Timeline:</strong> September 2023 — July 2027 <span style="color: var(--luxury-gold); font-weight: 700;">| Undergraduate Candidate</span></p>
+        </div>
+
+        <div class="section-title reveal">Professional Domains of Expertise</div>
+        <div class="grid-4 reveal">
+            <div class="card">
+                <h3>Urban & Regional Planning</h3>
+                <p>Master plans, zoning regulations, and macro-level demographic frameworks.</p>
+            </div>
+            <div class="card">
+                <h3>Real Estate Development</h3>
+                <p>Site layout prep, feasibility analysis, and land valuation metrics.</p>
+            </div>
+            <div class="card">
+                <h3>Public Policy & Governance</h3>
+                <p>URDPFI guidelines, socio-economic integrations, and administrative logistics.</p>
+            </div>
+            <div class="card">
+                <h3>Geospatial Data Science</h3>
+                <p>Advanced remote sensing, algorithmic spatial configurations, and automation.</p>
+            </div>
+            <div class="card">
+                <h3>Transportation & Mobility</h3>
+                <p>Traffic flow dynamics, logistics corridors, and transit-oriented development.</p>
+            </div>
+            <div class="card">
+                <h3>Smart City Infrastructure</h3>
+                <p>AI integrations, automated grid management, and digital twin models.</p>
+            </div>
+            <div class="card">
+                <h3>Environmental Planning</h3>
+                <p>Blue-Green resilient economies, climate adaptation, and resource conservation.</p>
+            </div>
+            <div class="card">
+                <h3>Disaster Risk Management</h3>
+                <p>Vulnerability mapping, evacuation modeling, and resilient zoning.</p>
+            </div>
+        </div>
+
+        <div class="section-title reveal">Authored QGIS Components</div>
+        <div class="grid-2 reveal">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <div style="font-size: 2rem;">⚙️</div>
+                    <div style="font-size: 0.75rem; color: var(--luxury-gold); font-weight: 700; border: 1px solid var(--luxury-gold); padding: 4px 12px; border-radius: 20px;">SOLE AUTHOR</div>
+                </div>
+                <h3>Abi Index Calculator</h3>
+                <p>A high-performance execution program developed natively as a QGIS Plugin. It automates calculations for complex multi-band remote sensing expressions (NDVI, NDWI, NDBI), bypassing manual raster math for rapid environmental baseline assessments.</p>
+                <a href="https://plugins.qgis.org/plugins/abi_indces/" target="_blank" class="btn-link interactive">View Official QGIS Repository Listing →</a>
+            </div>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <div style="font-size: 2rem;">🛰️</div>
+                    <div style="font-size: 0.75rem; color: var(--luxury-gold); font-weight: 700; border: 1px solid var(--luxury-gold); padding: 4px 12px; border-radius: 20px;">SOLE AUTHOR</div>
+                </div>
+                <h3>Abi GEE Index Downloader</h3>
+                <p>A specialized script integrated as an active QGIS Plugin establishing direct data pipelines with Google Earth Engine clusters. It automates the seamless transfer of massive multi-decade temporal spatial matrices directly to local layouts.</p>
+                <a href="https://plugins.qgis.org/plugins/abi_gee_index_downloader/" target="_blank" class="btn-link interactive">View Official QGIS Repository Listing →</a>
+            </div>
+        </div>
+
+        <div class="section-title reveal">Master Planning & Structural Frameworks</div>
+        <div class="grid-3 reveal">
+            <div class="card project-card">
+                <div class="project-img-frame">📐 Residential Design</div>
+                <div class="project-info">
+                    <h3>100-Hectare Residential Layout</h3>
+                    <p>Comprehensive structural layout preparation, parcel configuration, and site feasibility drafting for Sameera Developers, Chennai.</p>
+                </div>
+            </div>
+            <div class="card project-card">
+                <div class="project-img-frame">🗺️ Regional Frameworks</div>
+                <div class="project-info">
+                    <h3>Sattur Master Plan 2025-2045</h3>
+                    <p>Engineered core transportation sector modeling, plotting macro demographic dispersion and regional scalability metrics.</p>
+                </div>
+            </div>
+            <div class="card project-card">
+                <div class="project-img-frame">🚦 Mobility Corridors</div>
+                <div class="project-info">
+                    <h3>Sriperumbudur Transportation Plan</h3>
+                    <p>Synthesized macroscopic land-allocation profiles and traffic capacity models for high-density industrial logistics hubs.</p>
+                </div>
+            </div>
+            <div class="card project-card">
+                <div class="project-img-frame">🌾 Rural Synergy</div>
+                <div class="project-info">
+                    <h3>Kullampatti Village Development</h3>
+                    <p>Drafted micro-level socio-economic integrations, agro-infrastructure planning, and localized resource preservation frameworks.</p>
+                </div>
+            </div>
+            <div class="card project-card">
+                <div class="project-img-frame">🏙️ Satellite Nodes</div>
+                <div class="project-info">
+                    <h3>Thiruporur Sub City Plan</h3>
+                    <p>Formulated strategic zoning, transit-oriented development grids, and public utility layouts for rapid urban periphery expansion.</p>
+                </div>
+            </div>
+            <div class="card project-card">
+                <div class="project-img-frame">🌿 Policy Formulation</div>
+                <div class="project-info">
+                    <h3>Blue-Green Resilient Economy</h3>
+                    <p>Published analytical policy paper mapping environmental resource conservation frameworks at the 73rd ITPI National Conference.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title reveal">Comprehensive Software Toolkit</div>
+        <div class="grid-4 reveal">
+            <div class="card">
+                <h3>Geospatial & Mapping</h3>
+                <div class="tags">
+                    <span class="tag">ArcGIS Pro</span>
+                    <span class="tag">ArcMap</span>
+                    <span class="tag">QGIS</span>
+                    <span class="tag">Google Earth Pro</span>
+                    <span class="tag">Google Earth Engine</span>
+                    <span class="tag">ENVI</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Coding & Analytics</h3>
+                <div class="tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">R Programming</span>
+                    <span class="tag">PyQGIS Automation</span>
+                    <span class="tag">Spatial Algorithms</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Drafting & 3D Modeling</h3>
+                <div class="tags">
+                    <span class="tag">AutoCAD</span>
+                    <span class="tag">SketchUp</span>
+                    <span class="tag">Revit Structure</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Rendering & Visualization</h3>
+                <div class="tags">
+                    <span class="tag">Lumion</span>
+                    <span class="tag">V-Ray</span>
+                    <span class="tag">D5 Render</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Transportation Modeling</h3>
+                <div class="tags">
+                    <span class="tag">PTV Vissim</span>
+                    <span class="tag">Traffic Flow Simulation</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Graphics & Production</h3>
+                <div class="tags">
+                    <span class="tag">Adobe Photoshop</span>
+                    <span class="tag">Adobe Illustrator</span>
+                    <span class="tag">Adobe InDesign</span>
+                    <span class="tag">MS Office Suite</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title reveal">Hard Skills & Technical Operations</div>
+        <div class="card reveal">
+            <div class="tags" style="gap: 12px;">
+                <span class="tag" style="border-color: var(--luxury-gold);">LiDAR Data Analysis & Extraction</span>
+                <span class="tag">Remote Sensing Interpretation</span>
+                <span class="tag">Multi-Criteria Decision Analysis (MCDA)</span>
+                <span class="tag">Master Plan Drafting</span>
+                <span class="tag">Land Use Zoning</span>
+                <span class="tag">Site Layout Preparation</span>
+                <span class="tag">Demographic Forecasting</span>
+                <span class="tag">Traffic Capacity Modeling</span>
+                <span class="tag">Real Estate Feasibility</span>
+                <span class="tag">Topographical Survey Analysis</span>
+                <span class="tag">Socio-Economic Surveys</span>
+                <span class="tag">URDPFI Standards Compliance</span>
+                <span class="tag">Satellite Image Processing</span>
+                <span class="tag">Smart City Sensor Integration</span>
+                <span class="tag">Spatial Algorithm Engineering</span>
+            </div>
+        </div>
+
+        <div id="contact" class="contact-panel reveal" style="margin-top: 100px;">
+            <h3 style="font-family: 'Cinzel'; font-size: 2.2rem; color: var(--accent-ivy); margin: 0 0 15px 0;">Initiate Professional Dialogue</h3>
+            <p style="max-width: 600px; margin: 0 auto 40px auto; font-size: 1.1rem;">Currently engaging with architectural networks, public governance boards, and geospatial technology firms. Open for high-level urban design operations and office internships.</p>
+            
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="mailto:abishek.b.plan@gmail.com" class="btn-gold interactive">✉️ Send Office Email</a>
+                <a href="https://www.linkedin.com/in/abishek-ra" target="_blank" class="btn-gold interactive">View LinkedIn</a>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <h4 style="font-family: 'Cinzel'; color: var(--luxury-gold);">Languages Profile</h4>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
+                    <span class="tag" style="background: transparent;">Tamil (Native)</span>
+                    <span class="tag" style="background: transparent;">English (Professional)</span>
+                    <span class="tag" style="background: transparent;">Malayalam (Conversational)</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>SPATIAL DESIGN & METRICS REPOSITORY &copy; 2026 ABISHEK R</p>
+    </footer>
+
+    <script>
+        // 1. Custom Comet Cursor Logic
+        const comet = document.getElementById('comet');
+        const tail = document.getElementById('comet-tail');
+        const interactives = document.querySelectorAll('.interactive');
+
+        document.addEventListener('mousemove', (e) => {
+            comet.style.left = e.clientX + 'px';
+            comet.style.top = e.clientY + 'px';
+            
+            // Tail follows with slight delay
+            setTimeout(() => {
+                tail.style.left = e.clientX + 'px';
+                tail.style.top = e.clientY + 'px';
+            }, 60);
+        });
+
+        // Add visual feedback when hovering over links/buttons
+        interactives.forEach(el => {
+            el.addEventListener('mouseenter', () => comet.classList.add('hover-active'));
+            el.addEventListener('mouseleave', () => comet.classList.remove('hover-active'));
+        });
+
+        // 2. Scroll Reveal Animation Logic
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger on load
+    </script>
+</body>
+</html>
