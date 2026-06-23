@@ -247,7 +247,7 @@
             letter-spacing: 2px;
         }
 
-        .section-sub {
+        .section-sub, .section-subtitle {
             text-align: center;
             max-width: 750px;
             margin: 0 auto 60px auto;
@@ -436,6 +436,61 @@
             transform: translateY(-2px);
         }
 
+        /* --- PORTFOLIO GRID --- */
+        .portfolio-section {
+            padding: 120px 8%;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .portfolio-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: .4s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(35, 71, 51, 0.1);
+        }
+
+        .portfolio-card img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 18px;
+            background: linear-gradient(
+                to top,
+                rgba(0,0,0,.9),
+                transparent
+            );
+            color: white;
+            transition: opacity 0.3s;
+        }
+
+        .portfolio-card h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
         /* --- COUNTERS --- */
         .achievement-grid {
             display: grid;
@@ -588,7 +643,7 @@
         /* --- PROJECTS --- */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 30px;
         }
 
@@ -600,6 +655,8 @@
             border: 1px solid rgba(35, 71, 51, 0.04);
             transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
 
         .project-card:hover {
@@ -607,38 +664,26 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
         }
 
-        .project-img-wrapper {
-            height: 220px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .project-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .project-card:hover .project-img-wrapper img {
-            transform: scale(1.1);
-        }
-
-        .project-card-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(35, 71, 51, 0.4), transparent);
-        }
-
         .project-info {
-            padding: 30px;
+            padding: 35px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .project-info h3 {
             font-family: 'Cinzel', serif;
             color: var(--emerald);
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             margin-bottom: 15px;
+        }
+        
+        .project-info p {
+            font-size: 1rem;
+            line-height: 1.8;
+            opacity: 0.85;
+            margin-bottom: 25px;
+            flex-grow: 1;
         }
 
         .project-tags {
@@ -923,6 +968,25 @@
             letter-spacing: 1px;
         }
 
+        .media-overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 14px;
+            background: linear-gradient(to top, rgba(0,0,0,.8), transparent);
+            color: #fff;
+            font-weight: 700;
+            z-index: 5;
+        }
+
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         /* --- CONTACT --- */
         .contact-wrap {
             max-width: 600px;
@@ -998,6 +1062,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Project Modal Close Button */
         .close-modal {
             position: absolute;
             right: 25px;
@@ -1010,6 +1075,34 @@
 
         .close-modal:hover {
             color: var(--gold);
+        }
+
+        /* Full Screen Slide Viewer CSS */
+        .slide-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide-modal img {
+            width: 90%;
+            max-width: 1400px;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        /* Scoped to avoid conflict with project modal close button */
+        .slide-modal .close-modal {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
         }
 
         .modal-content h2 {
@@ -1159,7 +1252,7 @@
         <ul class="nav-links">
             <li><a href="#home" class="active">Home</a></li>
             <li><a href="#about">About</a></li>
-            <li><a href="#plugins">Plugins</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#experience">Experience</a></li>
             <li><a href="#research">Research</a></li>
@@ -1214,6 +1307,78 @@
                     <span>Smart Governance</span>
                     <span>Spatial Analytics</span>
                     <span>Google Earth Engine</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="portfolio-section reveal">
+        <h2 class="section-title">Portfolio Presentation</h2>
+        <p class="section-subtitle">
+            Selected Planning and Design Presentation Slides
+        </p>
+
+        <div class="portfolio-grid">
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide1.jpg')">
+                <img src="portfolio/Slide1.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 01</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide2.jpg')">
+                <img src="portfolio/Slide2.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 02</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide3.jpg')">
+                <img src="portfolio/Slide3.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 03</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide4.jpg')">
+                <img src="portfolio/Slide4.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 04</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide5.jpg')">
+                <img src="portfolio/Slide5.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 05</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide6.jpg')">
+                <img src="portfolio/Slide6.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 06</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide7.jpg')">
+                <img src="portfolio/Slide7.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 07</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide8.jpg')">
+                <img src="portfolio/Slide8.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 08</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide9.jpg')">
+                <img src="portfolio/Slide9.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 09</h4>
                 </div>
             </div>
         </div>
@@ -1291,71 +1456,51 @@
         <h2 class="section-title reveal">Featured Projects</h2>
         <p class="section-sub reveal">A showcase of spatial analytics blueprints, site layouts, and municipal Master Plans.</p>
         <div class="projects-grid">
-            <div class="project-card reveal" onclick="openProjectModal('100 Hectare Residential Layout', 'A premium, high-density neighborhood layout master development layout structure configuring residential sub-sectors with integrated infrastructure plans, ecological buffer management zone rules, and traffic distribution models.')">
-                <div class="project-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop" alt="Layout Planning">
-                    <div class="project-card-overlay"></div>
-                </div>
+            
+            <div class="project-card reveal" onclick="openProjectModal('Kullampatti Master Plan', 'Comprehensive village-level spatial planning including land-use allocation, road hierarchy, infrastructure proposals, public amenities, and sustainable future growth strategies.')">
                 <div class="project-info">
-                    <h3>100 Hectare Residential Layout</h3>
+                    <h3>Kullampatti Master Plan</h3>
+                    <p>Comprehensive village-level spatial planning including land-use allocation, road hierarchy, infrastructure proposals, public amenities, and sustainable future growth strategies.</p>
                     <div class="project-tags">
-                        <span>Layout Planning</span>
-                        <span>Land Use Design</span>
+                        <span>Spatial Planning</span>
+                        <span>Village Development</span>
                     </div>
                 </div>
             </div>
-            <div class="project-card reveal" onclick="openProjectModal('Architectural Visualization Render', 'High-definition 3D visualization and spatial structural model configurations rendering urban spaces and site analysis structures with computational light engines.')">
-                <div class="project-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&auto=format&fit=crop" alt="Visualization">
-                    <div class="project-card-overlay"></div>
-                </div>
+            
+            <div class="project-card reveal" onclick="openProjectModal('Sattur Development Plan', 'Urban development framework focusing on residential expansion, transportation improvements, economic activity zones, and public infrastructure enhancement.')">
                 <div class="project-info">
-                    <h3>Architectural Visualization Render</h3>
+                    <h3>Sattur Development Plan</h3>
+                    <p>Urban development framework focusing on residential expansion, transportation improvements, economic activity zones, and public infrastructure enhancement.</p>
                     <div class="project-tags">
-                        <span>3D Visualization</span>
-                        <span>Urban Design</span>
-                    </div>
-                </div>
-            </div>
-            <div class="project-card reveal" onclick="openProjectModal('Sattur Master Plan', 'A data-driven macro structural plan adjusting industrial framework layers, agricultural zones, and core infrastructure provisions for Sattur region.')">
-                <div class="project-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&auto=format&fit=crop" alt="Sattur Plan">
-                    <div class="project-card-overlay"></div>
-                </div>
-                <div class="project-info">
-                    <h3>Sattur Master Plan</h3>
-                    <div class="project-tags">
+                        <span>Urban Framework</span>
                         <span>Master Planning</span>
-                        <span>Zoning Logistics</span>
                     </div>
                 </div>
             </div>
-            <div class="project-card reveal" onclick="openProjectModal('Sriperumbudur Transportation Plan', 'A multi-modal transportation analysis mapping arterial nodes, capacity choke matrices, and future transit corridor structures.')">
-                <div class="project-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&auto=format&fit=crop" alt="Transit Plan">
-                    <div class="project-card-overlay"></div>
-                </div>
+
+            <div class="project-card reveal" onclick="openProjectModal('Traffic Simulation & Mobility Analysis', 'Traffic flow modelling, junction analysis, vehicle movement simulation, congestion assessment, and transportation planning studies.')">
                 <div class="project-info">
-                    <h3>Sriperumbudur Transportation Plan</h3>
+                    <h3>Traffic Simulation & Mobility Analysis</h3>
+                    <p>Traffic flow modelling, junction analysis, vehicle movement simulation, congestion assessment, and transportation planning studies.</p>
                     <div class="project-tags">
-                        <span>Transit Corridor</span>
-                        <span>Network Flows</span>
+                        <span>Mobility</span>
+                        <span>Simulation</span>
                     </div>
                 </div>
             </div>
-            <div class="project-card reveal" onclick="openProjectModal('Kullampatti Village Development Plan', 'A sustainable local village framework outlining socio-economic spatial arrangements, micro-watershed mapping, and public health infrastructure alignments.')">
-                <div class="project-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1460317442991-0ec209397118?w=800&auto=format&fit=crop" alt="Village Plan">
-                    <div class="project-card-overlay"></div>
-                </div>
+
+            <div class="project-card reveal" onclick="openProjectModal('Residential Township Planning', 'Layout planning, infrastructure design, open space allocation, road network development, and housing sector planning for large-scale residential developments.')">
                 <div class="project-info">
-                    <h3>Kullampatti Village Development Plan</h3>
+                    <h3>Residential Township Planning</h3>
+                    <p>Layout planning, infrastructure design, open space allocation, road network development, and housing sector planning for large-scale residential developments.</p>
                     <div class="project-tags">
-                        <span>Rural Design</span>
-                        <span>Socio-Spatial</span>
+                        <span>Township Planning</span>
+                        <span>Infrastructure</span>
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -1470,42 +1615,125 @@
         <h2 class="section-title reveal">Project Gallery</h2>
         <p class="section-sub reveal">Geospatial overlays, remote sensing outputs, and design drafts.</p>
         <div class="gallery-grid">
+            
             <div class="gallery-item reveal" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1524661135339-9140b00787e3?w=600" alt="GIS Mapping Grid">
+                <img src="assets/1.png" alt="Residential Layout">
                 <div class="gallery-overlay">
-                    <div class="gallery-info"><h4>GIS Maps</h4><p>Geospatial Infrastructure Layering</p></div>
+                    <div class="gallery-info">
+                        <h4>Residential Layout</h4>
+                        <p>Spatial Design</p>
+                    </div>
                 </div>
             </div>
-            <div class="gallery-item reveal" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600" alt="Satellite Spectrum Matrix">
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/2.mp4" type="video/mp4">
+                </video>
                 <div class="gallery-overlay">
-                    <div class="gallery-info"><h4>Satellite Imagery</h4><p>Remote Sensing Spectral Indices</p></div>
+                    <div class="gallery-info">
+                        <h4>Traffic Simulation</h4>
+                        <p>Mobility Analysis</p>
+                    </div>
                 </div>
             </div>
-            <div class="gallery-item reveal" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600" alt="Smart City Automation Model">
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/3.mp4" type="video/mp4">
+                </video>
                 <div class="gallery-overlay">
-                    <div class="gallery-info"><h4>Smart Cities</h4><p>Dynamic Municipal Asset Layers</p></div>
+                    <div class="gallery-info">
+                        <h4>Traffic Simulation</h4>
+                        <p>Mobility Analysis</p>
+                    </div>
                 </div>
             </div>
+
             <div class="gallery-item reveal" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600" alt="Transportation Corridor Matrix">
+                <img src="assets/4.jpg" alt="Render">
                 <div class="gallery-overlay">
-                    <div class="gallery-info"><h4>Transportation Networks</h4><p>Network Optimization Nodes</p></div>
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
                 </div>
             </div>
+
             <div class="gallery-item reveal" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1502920514313-52581002a659?w=600" alt="Urban Core Morphologies">
+                <img src="assets/5.jpg" alt="Render">
                 <div class="gallery-overlay">
-                    <div class="gallery-info"><h4>Urban Design</h4><p>3D Visualization & Typology</p></div>
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
                 </div>
             </div>
+
             <div class="gallery-item reveal" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1533563906091-fdfdffc3e3c4?w=600" alt="Regional Plan Layout Grid">
+                <img src="assets/6.jpg" alt="Render">
                 <div class="gallery-overlay">
-                    <div class="gallery-info"><h4>Regional Planning</h4><p>Macro Spatial Zoning Plans</p></div>
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
                 </div>
             </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/7.jpg" alt="Render">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/8.png" alt="Visualization">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Visualization</h4>
+                        <p>3D Model</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/9.png" alt="Visualization">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Visualization</h4>
+                        <p>3D Model</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/10.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Video Render</h4>
+                        <p>3D Walkthrough</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/11.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Video Render</h4>
+                        <p>3D Walkthrough</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -1523,6 +1751,11 @@
             </div>
         </div>
     </section>
+
+    <div id="slideModal" class="slide-modal">
+        <span class="close-modal">&times;</span>
+        <img id="modalSlide">
+    </div>
 
     <div class="modal" id="projectModal">
         <div class="modal-content">
@@ -1849,6 +2082,37 @@
         function closeLightbox() {
             galleryLightbox.style.display = 'none';
         }
+
+        /* --- PORTFOLIO SLIDE MODAL ENGINE --- */
+        const slideModalObj = document.getElementById('slideModal');
+        const modalSlideImg = document.getElementById('modalSlide');
+
+        function openSlide(src) {
+            slideModalObj.style.display = 'flex';
+            modalSlideImg.src = src;
+        }
+
+        document.querySelector('#slideModal .close-modal').onclick = () => {
+            slideModalObj.style.display = 'none';
+        };
+
+        slideModalObj.onclick = (e) => {
+            if (e.target === slideModalObj) {
+                slideModalObj.style.display = 'none';
+            }
+        };
+
+        /* --- VIDEO AUTOPLAY OBSERVER --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            const vids = document.querySelectorAll('.autoplay-video');
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) { e.target.play().catch(() => {}); }
+                    else { e.target.pause(); }
+                });
+            }, { threshold: 0.5 });
+            vids.forEach(v => io.observe(v));
+        });
     </script>
 </body>
 </html>
