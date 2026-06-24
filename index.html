@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABISHEK R | Urban Planning & Spatial Intelligence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
+
+    <style>
+        :root {
+            --ivory: #F8FBF8;
+            --emerald: #234733;
+            --gold: #CDA226;
+            --sage: #DCE8DF;
+            --text: #1A2B20;
+            --glass: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.25);
+            --card-bg: rgba(255, 255, 255, 0.75);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--ivory);
+            color: var(--text);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* --- LOADER --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), visibility 1s;
+        }
+
+        .loader-wrap {
+            text-align: center;
+        }
+
+        .loader-logo {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid rgba(35, 71, 51, 0.15);
+            border-top: 3px solid var(--emerald);
+            animation: spin 1.2s linear infinite;
+            margin: auto;
+        }
+
+        .loader-text {
+            margin-top: 25px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            color: var(--emerald);
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor {
+            width: 10px;
+            height: 10px;
+            background: var(--emerald);
+            border-radius: 50%;
+            position: fixed;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            z-index: 100010;
+            transform: translate(-50%, -50%);
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid rgba(35, 71, 51, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100005;
+            left: 0;
+            top: 0;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
+        }
+
+        .star-particle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 12px;
+            color: var(--gold);
+            z-index: 100000;
+            animation: starFade 0.8s linear forwards;
+        }
+
+        @keyframes starFade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -100%) scale(0.3); }
+        }
+
+        /* --- BACKGROUND CANVAS / MATRIX --- */
+        #space-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -6;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -5;
+            background-image: 
+                linear-gradient(rgba(35, 71, 51, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(35, 71, 51, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .contours {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            opacity: 0.12;
+            background-image: url("https://www.transparenttextures.com/patterns/topography.png");
+            pointer-events: none;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            backdrop-filter: blur(20px);
+            background: rgba(248, 251, 248, 0.7);
+            border-bottom: 1px solid rgba(35, 71, 51, 0.08);
+            transition: background 0.4s, padding 0.4s;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--emerald);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--emerald);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            font-size: 0.9rem;
+            font-weight: 600;
+            position: relative;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.4s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .mobile-btn {
+            display: none;
+            font-size: 1.4rem;
+            color: var(--emerald);
+            cursor: pointer;
+        }
+
+        /* --- SECTIONS --- */
+        section {
+            padding: 120px 8%;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.6rem;
+            text-align: center;
+            color: var(--emerald);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .section-sub, .section-subtitle {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 60px auto;
+            line-height: 1.8;
+            color: var(--text);
+            opacity: 0.85;
+            font-size: 1.05rem;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(220,232,223,0.5), transparent 70%);
+            filter: blur(80px);
+            z-index: -2;
+        }
+
+        .hero-content {
+            max-width: 950px;
+            z-index: 2;
+        }
+
+        .hero-small {
+            letter-spacing: 5px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 4.8rem;
+            line-height: 1.1;
+            color: var(--emerald);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .hero h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text);
+        }
+
+        .typing-container {
+            height: 40px;
+            margin-bottom: 30px;
+        }
+
+        .typing {
+            color: var(--emerald);
+            font-weight: 700;
+            font-size: 1.35rem;
+            border-right: 2px solid var(--gold);
+            padding-right: 5px;
+            animation: blink 0.7s infinite alternate;
+            white-space: nowrap;
+        }
+
+        @keyframes blink {
+            from { border-color: transparent }
+            to { border-color: var(--gold) }
+        }
+
+        .hero-desc {
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.9;
+            font-size: 1.05rem;
+            opacity: 0.9;
+        }
+
+        .hero-btns {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--emerald);
+            color: white;
+            box-shadow: 0 10px 25px rgba(35, 71, 51, 0.15);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(35, 71, 51, 0.3);
+        }
+
+        .btn-secondary {
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            background: transparent;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gold);
+            color: white;
+            transform: translateY(-4px);
+        }
+
+        /* --- ABOUT --- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: stretch;
+        }
+
+        .about-card {
+            background: white;
+            padding: 45px;
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(35, 71, 51, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .about-card h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--emerald);
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--sage);
+            padding-bottom: 10px;
+        }
+
+        .about-card p {
+            line-height: 1.9;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        .about-card p strong {
+            color: var(--emerald);
+        }
+
+        .interests {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .interests span {
+            padding: 8px 16px;
+            background: var(--sage);
+            border-radius: 30px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--emerald);
+            transition: all 0.3s;
+        }
+
+        .interests span:hover {
+            background: var(--emerald);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* --- PORTFOLIO GRID --- */
+        .portfolio-section {
+            padding: 120px 8%;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .portfolio-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: .4s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(35, 71, 51, 0.1);
+        }
+
+        .portfolio-card img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 18px;
+            background: linear-gradient(
+                to top,
+                rgba(0,0,0,.9),
+                transparent
+            );
+            color: white;
+            transition: opacity 0.3s;
+        }
+
+        .portfolio-card h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        /* --- COUNTERS --- */
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .counter-card {
+            background: white;
+            padding: 35px 15px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(35, 71, 51, 0.04);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .counter-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(35, 71, 51, 0.1);
+        }
+
+        .counter {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .counter-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text);
+            opacity: 0.9;
+        }
+
+        /* --- PLUGINS --- */
+        .plugins-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .plugin-card {
+            position: relative;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 28px;
+            padding: 40px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .plugin-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(35, 71, 51, 0.12);
+            border-color: rgba(35, 71, 51, 0.2);
+        }
+
+        .plugin-card::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--sage), transparent 75%);
+            z-index: -1;
+        }
+
+        .plugin-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .plugin-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--emerald), #326448);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: white;
+            box-shadow: 0 10px 20px rgba(35, 71, 51, 0.15);
+        }
+
+        .plugin-card h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--emerald);
+            font-size: 1.4rem;
+        }
+
+        .plugin-card p {
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .plugin-features {
+            margin-bottom: 25px;
+        }
+
+        .plugin-features li {
+            font-size: 0.92rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .plugin-features li i {
+            color: var(--gold);
+        }
+
+        .plugin-btn {
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            background: var(--emerald);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 20px rgba(35, 71, 51, 0.1);
+            transition: all 0.3s;
+        }
+
+        .plugin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(35, 71, 51, 0.25);
+            background: #193324;
+        }
+
+        /* --- PROJECTS --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(35, 71, 51, 0.04);
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        .project-info {
+            padding: 35px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-info h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--emerald);
+            font-size: 1.35rem;
+            margin-bottom: 15px;
+        }
+        
+        .project-info p {
+            font-size: 1rem;
+            line-height: 1.8;
+            opacity: 0.85;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .project-tags span {
+            background: var(--sage);
+            color: var(--emerald);
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* --- EXPERIENCE TIMELINE --- */
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(var(--gold), var(--emerald));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            width: 50%;
+            padding: 20px 40px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            top: 30px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 4px solid white;
+            box-shadow: 0 0 0 6px rgba(205, 162, 38, 0.15);
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -9px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -9px;
+        }
+
+        .timeline-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(35, 71, 51, 0.04);
+            transition: transform 0.4s;
+        }
+
+        .timeline-card:hover {
+            transform: scale(1.03);
+        }
+
+        .timeline-card h3 {
+            color: var(--gold);
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .timeline-card h4 {
+            font-family: 'Cinzel', serif;
+            color: var(--emerald);
+            font-size: 1.15rem;
+            margin-bottom: 6px;
+        }
+
+        .timeline-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0.85;
+        }
+
+        /* --- RESEARCH --- */
+        .research-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(35, 71, 51, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .research-card::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            right: -120px;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--sage), transparent 70%);
+        }
+
+        .research-icon {
+            width: 75px;
+            height: 75px;
+            background: linear-gradient(135deg, var(--gold), #e0b431);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(205, 162, 38, 0.2);
+        }
+
+        .research-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--emerald);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .research-card p {
+            line-height: 1.9;
+            font-size: 1.05rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+
+        .research-badge {
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 50px;
+            background: var(--emerald);
+            color: white;
+            font-weight: 700;
+            font-size: 0.88rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- SKILLS DASHBOARD --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-card {
+            background: white;
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(35, 71, 51, 0.04);
+            transition: transform 0.4s;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .skill-card h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--emerald);
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            border-left: 3px solid var(--gold);
+            padding-left: 12px;
+        }
+
+        .skill-item {
+            margin-bottom: 20px;
+        }
+
+        .skill-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #eef4f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--emerald));
+            border-radius: 10px;
+            width: 0;
+            transition: width 2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* --- GALLERY --- */
+        .gallery-grid {
+            column-count: 3;
+            column-gap: 20px;
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 20px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(35, 71, 51, 0.85), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            display: flex;
+            align-items: flex-end;
+            padding: 25px;
+            color: white;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-info h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .gallery-info p {
+            font-size: 0.82rem;
+            opacity: 0.85;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .media-overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 14px;
+            background: linear-gradient(to top, rgba(0,0,0,.8), transparent);
+            color: #fff;
+            font-weight: 700;
+            z-index: 5;
+        }
+
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* --- CONTACT --- */
+        .contact-wrap {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-btns {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .contact-btn {
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-linkedin {
+            background: #0A66C2;
+            box-shadow: 0 10px 20px rgba(10, 102, 194, 0.2);
+        }
+
+        .btn-linkedin:hover {
+            background: #084d93;
+            transform: translateY(-4px);
+        }
+
+        .btn-email {
+            background: var(--emerald);
+            box-shadow: 0 10px 20px rgba(35, 71, 51, 0.2);
+        }
+
+        .btn-email:hover {
+            background: #183324;
+            transform: translateY(-4px);
+        }
+
+        /* --- MODALS & LIGHTBOX --- */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 43, 32, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.4s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Project Modal Close Button */
+        .close-modal {
+            position: absolute;
+            right: 25px;
+            top: 25px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--emerald);
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--gold);
+        }
+
+        /* Full Screen Slide Viewer CSS */
+        .slide-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide-modal img {
+            width: 90%;
+            max-width: 1400px;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        /* Scoped to avoid conflict with project modal close button */
+        .slide-modal .close-modal {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--emerald);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .modal-content p {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            opacity: 0.9;
+        }
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 26, 19, 0.95);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+            padding: 20px;
+        }
+
+        .lightbox img {
+            max-width: 85%;
+            max-height: 85vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 2.2rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            background: var(--emerald);
+            color: white;
+            padding: 80px 8% 40px 8%;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            opacity: 0.85;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 10px auto;
+            font-size: 0.95rem;
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* --- SCROLL REVEAL CLASS --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- RESPONSIVE STYLES --- */
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 3.8rem; }
+            .projects-grid { grid-template-columns: repeat(2, 1fr); }
+            .gallery-grid { column-count: 2; }
+            .achievement-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            body { cursor: default; }
+            .cursor, .cursor-ring { display: none !important; }
+            .navbar { padding: 15px 6%; }
+            .nav-links { display: none; }
+            .mobile-btn { display:block; }
+            .hero h1 { font-size: 2.8rem; }
+            .hero h2 { font-size: 1.4rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 30px; }
+            .plugins-grid { grid-template-columns: 1fr; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .achievement-grid { grid-template-columns: repeat(2, 1fr); }
+            .gallery-grid { column-count: 1; }
+            .timeline::before { left: 20px; }
+            .timeline-item { width: 100%; padding-left: 45px; padding-right: 0; text-align: left !important; }
+            .timeline-dot { left: 11px !important; right: auto !important; }
+            .contact-btns { flex-direction: column; align-items: center; }
+            .contact-btn { width: 100%; max-width: 280px; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="space-canvas"></canvas>
+
+    <div id="loader">
+        <div class="loader-wrap">
+            <div class="loader-logo"></div>
+            <div class="loader-text">ABISHEK R</div>
+        </div>
+    </div>
+
+    <div class="cursor"></div>
+    <div class="cursor-ring"></div>
+
+    <div class="grid-bg"></div>
+    <div class="contours"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <svg viewBox="0 0 24 24">
+                <path d="M12,2L2,22H22L12,2M12,6L18.8,18H5.2L12,6M12,9L9,14H15L12,9Z"/>
+            </svg>
+            ABISHEK R
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#research">Research</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="mobile-btn" id="mobile-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content reveal">
+            <div class="hero-small">URBAN PLANNING • GIS • SPATIAL INTELLIGENCE</div>
+            <h1>ABISHEK R</h1>
+            <h2>Urban Planning & Spatial Intelligence</h2>
+            <div class="typing-container">
+                <span class="typing" id="typing-text"></span>
+            </div>
+            <p class="hero-desc">
+                Bachelor of Planning Student at the School of Architecture and Planning, Anna University, Chennai. 
+                Specialized in building tools, architectures, and quantitative tracking algorithms targeted at urban resilient transformations.
+            </p>
+            <div class="hero-btns">
+                <a href="#about" class="btn btn-primary"><i class="fa-solid fa-compass"></i> Explore Portfolio</a>
+                <a href="#contact" class="btn btn-secondary"><i class="fa-solid fa-paper-plane"></i> Get In Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title reveal">About Me</h2>
+        <p class="section-sub reveal">
+            Synthesizing geographical constraints, digital automation infrastructures, and demographic insights to forecast next-generation resilient municipal configurations.
+        </p>
+        <div class="about-grid">
+            <div class="about-card reveal">
+                <h3>Academic Profile</h3>
+                <p><strong>Institution:</strong> School of Architecture and Planning, Anna University, Chennai</p>
+                <p><strong>Degree Pursued:</strong> Bachelor of Planning</p>
+                <p><strong>Expected Graduation:</strong> 2027</p>
+            </div>
+            <div class="about-card reveal">
+                <h3>Areas of Interest</h3>
+                <div class="interests">
+                    <span>Urban Planning</span>
+                    <span>GIS Development</span>
+                    <span>Remote Sensing</span>
+                    <span>Transportation Planning</span>
+                    <span>Environmental Planning</span>
+                    <span>Smart Governance</span>
+                    <span>Spatial Analytics</span>
+                    <span>Google Earth Engine</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="portfolio-section reveal">
+        <h2 class="section-title">Portfolio Presentation</h2>
+        <p class="section-subtitle">
+            Selected Planning and Design Presentation Slides
+        </p>
+
+        <div class="portfolio-grid">
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide1.jpg')">
+                <img src="portfolio/Slide1.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 01</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide2.jpg')">
+                <img src="portfolio/Slide2.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 02</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide3.jpg')">
+                <img src="portfolio/Slide3.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 03</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide4.jpg')">
+                <img src="portfolio/Slide4.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 04</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide5.jpg')">
+                <img src="portfolio/Slide5.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 05</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide6.jpg')">
+                <img src="portfolio/Slide6.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 06</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide7.jpg')">
+                <img src="portfolio/Slide7.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 07</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide8.jpg')">
+                <img src="portfolio/Slide8.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 08</h4>
+                </div>
+            </div>
+
+            <div class="portfolio-card" onclick="openSlide('portfolio/Slide9.jpg')">
+                <img src="portfolio/Slide9.jpg">
+                <div class="card-overlay">
+                    <h4>Slide 09</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="counters" style="padding: 40px 8%;">
+        <div class="achievement-grid">
+            <div class="counter-card reveal">
+                <div class="counter" data-target="2">0</div>
+                <div class="counter-title">QGIS Plugins</div>
+            </div>
+            <div class="counter-card reveal">
+                <div class="counter" data-target="5">0</div>
+                <div class="counter-title">Major Planning Projects</div>
+            </div>
+            <div class="counter-card reveal">
+                <div class="counter" data-target="2">0</div>
+                <div class="counter-title">Internships</div>
+            </div>
+            <div class="counter-card reveal">
+                <div class="counter" data-target="1">0</div>
+                <div class="counter-title">Published Research Paper</div>
+            </div>
+            <div class="counter-card reveal">
+                <div class="counter" data-target="2027">0</div>
+                <div class="counter-title">Expected Graduation</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="plugins">
+        <h2 class="section-title reveal">QGIS Plugins</h2>
+        <p class="section-sub reveal">
+            Open-source architecture extensions designed to eliminate manual iteration processes in geographic raster computing environments.
+        </p>
+        <div class="plugins-grid">
+            <div class="plugin-card reveal">
+                <div>
+                    <div class="plugin-header">
+                        <div class="plugin-icon"><i class="fa-solid fa-calculator"></i></div>
+                        <h3>Abi Index Calculator</h3>
+                    </div>
+                    <p>QGIS Plugin developed to automate calculation of remote sensing indices such as:</p>
+                    <ul class="plugin-features">
+                        <li><i class="fa-solid fa-square-check"></i> NDVI (Normalized Difference Vegetation Index)</li>
+                        <li><i class="fa-solid fa-square-check"></i> NDWI (Normalized Difference Water Index)</li>
+                        <li><i class="fa-solid fa-square-check"></i> NDBI (Normalized Difference Built-Up Index)</li>
+                    </ul>
+                </div>
+                <a href="https://plugins.qgis.org/plugins/abi_indices/" target="_blank" class="plugin-btn">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Official QGIS Listing
+                </a>
+            </div>
+            <div class="plugin-card reveal">
+                <div>
+                    <div class="plugin-header">
+                        <div class="plugin-icon"><i class="fa-solid fa-cloud-download"></i></div>
+                        <h3>Abi GEE Index Downloader</h3>
+                    </div>
+                    <p>QGIS Plugin that integrates Google Earth Engine and automates downloading index datasets directly into active user layers without configuration friction.</p>
+                    <ul class="plugin-features">
+                        <li><i class="fa-solid fa-square-check"></i> Direct Cloud Engine Authentication Pipeline</li>
+                        <li><i class="fa-solid fa-square-check"></i> Automated Resolution Interpolation</li>
+                        <li><i class="fa-solid fa-square-check"></i> Bulk Spatial Bounding Box Execution</li>
+                    </ul>
+                </div>
+                <a href="https://plugins.qgis.org/plugins/abi_gee_index_downloader/" target="_blank" class="plugin-btn">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Official QGIS Listing
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title reveal">Featured Projects</h2>
+        <p class="section-sub reveal">A showcase of spatial analytics blueprints, site layouts, and municipal Master Plans.</p>
+        <div class="projects-grid">
+            
+            <div class="project-card reveal" onclick="openProjectModal('Kullampatti Master Plan', 'Comprehensive village-level spatial planning including land-use allocation, road hierarchy, infrastructure proposals, public amenities, and sustainable future growth strategies.')">
+                <div class="project-info">
+                    <h3>Kullampatti Master Plan</h3>
+                    <p>Comprehensive village-level spatial planning including land-use allocation, road hierarchy, infrastructure proposals, public amenities, and sustainable future growth strategies.</p>
+                    <div class="project-tags">
+                        <span>Spatial Planning</span>
+                        <span>Village Development</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="project-card reveal" onclick="openProjectModal('Sattur Development Plan', 'Urban development framework focusing on residential expansion, transportation improvements, economic activity zones, and public infrastructure enhancement.')">
+                <div class="project-info">
+                    <h3>Sattur Development Plan</h3>
+                    <p>Urban development framework focusing on residential expansion, transportation improvements, economic activity zones, and public infrastructure enhancement.</p>
+                    <div class="project-tags">
+                        <span>Urban Framework</span>
+                        <span>Master Planning</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card reveal" onclick="openProjectModal('Traffic Simulation & Mobility Analysis', 'Traffic flow modelling, junction analysis, vehicle movement simulation, congestion assessment, and transportation planning studies.')">
+                <div class="project-info">
+                    <h3>Traffic Simulation & Mobility Analysis</h3>
+                    <p>Traffic flow modelling, junction analysis, vehicle movement simulation, congestion assessment, and transportation planning studies.</p>
+                    <div class="project-tags">
+                        <span>Mobility</span>
+                        <span>Simulation</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card reveal" onclick="openProjectModal('Residential Township Planning', 'Layout planning, infrastructure design, open space allocation, road network development, and housing sector planning for large-scale residential developments.')">
+                <div class="project-info">
+                    <h3>Residential Township Planning</h3>
+                    <p>Layout planning, infrastructure design, open space allocation, road network development, and housing sector planning for large-scale residential developments.</p>
+                    <div class="project-tags">
+                        <span>Township Planning</span>
+                        <span>Infrastructure</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2 class="section-title reveal">Experience Timeline</h2>
+        <p class="section-sub reveal">Corporate internships and professional execution tracks in municipal spatial management frameworks.</p>
+        <div class="timeline">
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <h3>2024</h3>
+                    <h4>DTCP Internship</h4>
+                    <p><strong>Location:</strong> Kanyakumari</p>
+                    <p>Executed structural master plan digitization, mapping layouts and verifying adherence to code guidelines.</p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <h3>2025</h3>
+                    <h4>LSGD Internship</h4>
+                    <p><strong>Location:</strong> Thiruvananthapuram</p>
+                    <p>Assisted local self-government engineers in updating geospatial asset registries and spatial transport networks.</p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <h3>2025–2026</h3>
+                    <h4>QGIS Plugin Development</h4>
+                    <p>Engineered automated raster calculation tools using Python and PyQGIS for global researchers.</p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <h3>2025</h3>
+                    <h4>Research Publication</h4>
+                    <p>Formulated paper tracking methods and sustainable economic frameworks at the national conference level.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="research">
+        <h2 class="section-title reveal">Research & Publications</h2>
+        <p class="section-sub reveal">Investigating macro-economic spatial vectors for sustainable regional growth models.</p>
+        <div class="research-card reveal">
+            <div class="research-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h3>Blue-Green Economy for a Resilient Future in India</h3>
+            <p>
+                Presented and published at the **73rd ITPI National Conference (2025)**. This research outlines structural methodologies 
+                reconciling hydrological networks with real estate development lines to mitigate urban ecological damage.
+            </p>
+            <div class="research-badge">73rd ITPI National Conference Publication (2025)</div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title reveal">Skills Dashboard</h2>
+        <p class="section-sub reveal">Granular performance indicators tracking execution capability levels across industry-relevant systems.</p>
+        <div class="skills-grid">
+            <div class="skill-card reveal">
+                <h3>Urban Planning</h3>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Master Planning & Zoning</span><span>95%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="95%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Regional & Land Use Strategy</span><span>92%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="92%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Transportation Network Vectoring</span><span>88%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="88%"></div></div>
+                </div>
+            </div>
+            <div class="skill-card reveal">
+                <h3>GIS & Remote Sensing</h3>
+                <div class="skill-item">
+                    <div class="skill-info"><span>QGIS & PyQGIS Architecture</span><span>95%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="95%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Google Earth Engine (GEE)</span><span>90%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="90%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>LiDAR Data Analysis</span><span>60%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="60%"></div></div>
+                </div>
+            </div>
+            <div class="skill-card reveal">
+                <h3>Design & Programming</h3>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Python (Automation Scripts)</span><span>85%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="85%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>AutoCAD, SketchUp & Lumion</span><span>90%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="90%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Report Writing</span><span>85%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" data-width="85%"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <h2 class="section-title reveal">Project Gallery</h2>
+        <p class="section-sub reveal">Geospatial overlays, remote sensing outputs, and design drafts.</p>
+        <div class="gallery-grid">
+            
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/1.png" alt="Residential Layout">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Residential Layout</h4>
+                        <p>Spatial Design</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/2.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Traffic Simulation</h4>
+                        <p>Mobility Analysis</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/3.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Traffic Simulation</h4>
+                        <p>Mobility Analysis</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/4.jpg" alt="Render">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/5.jpg" alt="Render">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/6.jpg" alt="Render">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/7.jpg" alt="Render">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Render</h4>
+                        <p>Urban Design</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/8.png" alt="Visualization">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Visualization</h4>
+                        <p>3D Model</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal" onclick="openLightbox(this)">
+                <img src="assets/9.png" alt="Visualization">
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Visualization</h4>
+                        <p>3D Model</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/10.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Video Render</h4>
+                        <p>3D Walkthrough</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item reveal">
+                <video class="autoplay-video" muted loop playsinline>
+                    <source src="assets/11.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-overlay">
+                    <div class="gallery-info">
+                        <h4>Video Render</h4>
+                        <p>3D Walkthrough</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="contact-wrap reveal">
+            <h2 class="section-title">Connect Professionally</h2>
+            <p style="margin-bottom: 20px;">Initiate collaboration regarding municipal GIS tool creation or spatial planning research initiatives.</p>
+            <div class="contact-btns">
+                <a href="https://www.linkedin.com/in/abishek-ra" target="_blank" class="contact-btn btn-linkedin">
+                    <i class="fa-brands fa-linkedin"></i> LinkedIn
+                </a>
+                <a href="mailto:abishek.b.plan@gmail.com" class="contact-btn btn-email">
+                    <i class="fa-solid fa-envelope"></i> Email Application
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div id="slideModal" class="slide-modal">
+        <span class="close-modal">&times;</span>
+        <img id="modalSlide">
+    </div>
+
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeProjectModal()"><i class="fa-solid fa-circle-xmark"></i></span>
+            <h2 id="modalTitle">Project Title</h2>
+            <p id="modalDescription">Detailed information block loading.</p>
+        </div>
+    </div>
+
+    <div class="lightbox" id="galleryLightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightboxImage" src="" alt="View Layer">
+    </div>
+
+    <footer class="footer">
+        <div class="footer-logo">ABISHEK R</div>
+        <p>Bachelor of Planning Student • School of Architecture and Planning • Anna University, Chennai</p>
+        <p style="font-size: 0.85rem; color: #a9caa7;">Urban Planning • GIS • Remote Sensing • Spatial Analytics</p>
+        <div class="footer-bottom">
+            &copy; 2026 Abishek R. All Spatial Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        /* --- APPLICATION LOADER DE-ACTIVATION --- */
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+                triggerSkillBars();
+            }, 1000);
+        });
+
+        /* --- SATELLITE SIMULATION VECTOR CORE --- */
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let satellites = [];
+        let debrisParticles = [];
+
+        function setCanvasDimensions() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        setCanvasDimensions();
+        window.addEventListener('resize', setCanvasDimensions);
+
+        class Satellite {
+            constructor() {
+                this.pivotX = canvas.width / 2;
+                this.pivotY = canvas.height / 2;
+                this.radiusX = Math.random() * (canvas.width * 0.35) + 150;
+                this.radiusY = Math.random() * (canvas.height * 0.2) + 50;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = (Math.random() * 0.003) + 0.001;
+                this.size = Math.random() * 3 + 3;
+                this.tilt = (Math.random() - 0.5) * 0.4;
+            }
+
+            update() {
+                this.angle += this.speed;
+                this.pivotX = canvas.width / 2;
+                this.pivotY = canvas.height / 2;
+            }
+
+            draw() {
+                let cos = Math.cos(this.angle);
+                let sin = Math.sin(this.angle);
+
+                let rawX = cos * this.radiusX;
+                let rawY = sin * this.radiusY;
+
+                let rotatedX = rawX * Math.cos(this.tilt) - rawY * Math.sin(this.tilt);
+                let rotatedY = rawX * Math.sin(this.tilt) + rawY * Math.cos(this.tilt);
+
+                let targetX = this.pivotX + rotatedX;
+                let targetY = this.pivotY + rotatedY;
+
+                // Trace Path Ring Line
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(35, 71, 51, 0.03)';
+                ctx.lineWidth = 1;
+                ctx.save();
+                ctx.translate(this.pivotX, this.pivotY);
+                ctx.rotate(this.tilt);
+                ctx.scale(this.radiusX / this.radiusY, 1);
+                ctx.arc(0, 0, this.radiusY, 0, Math.PI * 2);
+                ctx.restore();
+                ctx.stroke();
+
+                // Draw Signals & Communication Matrix Links
+                ctx.beginPath();
+                ctx.moveTo(targetX, targetY);
+                ctx.lineTo(canvas.width / 2, canvas.height / 2);
+                ctx.strokeStyle = 'rgba(205, 162, 38, 0.02)';
+                ctx.stroke();
+
+                // Draw Active Satellite Nodes
+                ctx.beginPath();
+                ctx.arc(targetX, targetY, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = cos > 0 ? '#234733' : '#CDA226';
+                ctx.fill();
+            }
+        }
+
+        function initSpaceLayers() {
+            satellites = [];
+            for (let i = 0; i < 4; i++) {
+                satellites.push(new Satellite());
+            }
+        }
+        initSpaceLayers();
+
+        function spaceEngineLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            satellites.forEach(sat => {
+                sat.update();
+                sat.draw();
+            });
+            requestAnimationFrame(spaceEngineLoop);
+        }
+        spaceEngineLoop();
+
+        /* --- PREMIUM CURSOR MOUSE ENGINE --- */
+        const cursorPoint = document.querySelector('.cursor');
+        const cursorRing = document.querySelector('.cursor-ring');
+
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorPoint.style.left = mouseX + 'px';
+            cursorPoint.style.top = mouseY + 'px';
+
+            if (Math.random() < 0.12) {
+                createStarParticle(mouseX, mouseY);
+            }
+            adjustAdaptiveColors(e.target);
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.12;
+            ringY += (mouseY - ringY) * 0.12;
+            cursorRing.style.left = ringX + 'px';
+            cursorRing.style.top = ringY + 'px';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        function createStarParticle(x, y) {
+            const star = document.createElement('div');
+            star.className = 'star-particle';
+            star.innerHTML = ['✦','✧','✦','✦'][Math.floor(Math.random() * 4)];
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 800);
+        }
+
+        function adjustAdaptiveColors(element) {
+            if (!element) return;
+            let closestSection = element.closest('section, footer');
+            if (closestSection) {
+                if (closestSection.id === 'research' || closestSection.tagName === 'FOOTER') {
+                    cursorPoint.style.background = '#CDA226';
+                    cursorRing.style.borderColor = 'rgba(205, 162, 38, 0.6)';
+                } else {
+                    cursorPoint.style.background = '#234733';
+                    cursorRing.style.borderColor = 'rgba(35, 71, 51, 0.4)';
+                }
+            }
+        }
+
+        /* --- TYPING ANIMATION ENGINE --- */
+        const rotatingRoles = [
+            "Bachelor of Planning Student",
+            "GIS Developer",
+            "Spatial Analyst",
+            "QGIS Plugin Developer",
+            "Urban Planning Researcher"
+        ];
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingSpeed = 100;
+        const eraseSpeed = 50;
+        const waitInterval = 2000;
+
+        function runTypingLoop() {
+            const currentString = rotatingRoles[roleIndex];
+            const displayTarget = document.getElementById('typing-text');
+
+            if (isDeleting) {
+                displayTarget.textContent = currentString.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                displayTarget.textContent = currentString.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentString.length) {
+                isDeleting = true;
+                setTimeout(runTypingLoop, waitInterval);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % rotatingRoles.length;
+                setTimeout(runTypingLoop, 400);
+            } else {
+                setTimeout(runTypingLoop, isDeleting ? eraseSpeed : typingSpeed);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => setTimeout(runTypingLoop, 1000));
+
+        /* --- PROGRESS DASHBOARD ANIMATION --- */
+        function triggerSkillBars() {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-width');
+            });
+        }
+
+        /* --- COUNTER NUMERICAL ANIMATION ENGINE --- */
+        const numericalCounters = document.querySelectorAll('.counter');
+        const counterSection = document.getElementById('counters');
+        let numbersAnimated = false;
+
+        function runCounterMetrics() {
+            numericalCounters.forEach(counter => {
+                const targetValue = parseInt(counter.getAttribute('data-target'));
+                let currentValue = 0;
+                let stepDivider = targetValue > 100 ? 40 : 20;
+                let incrementRate = Math.ceil(targetValue / stepDivider);
+
+                const counterUpdater = setInterval(() => {
+                    currentValue += incrementRate;
+                    if (currentValue >= targetValue) {
+                        counter.textContent = targetValue + (targetValue === 5 ? '+' : '');
+                        clearInterval(counterUpdater);
+                    } else {
+                        counter.textContent = currentValue;
+                    }
+                }, 30);
+            });
+        }
+
+        /* --- INTERSECTION ANIMATOR MATRIX --- */
+        const scrollRevealElements = document.querySelectorAll('.reveal');
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    if (entry.target === counterSection && !numbersAnimated) {
+                        numbersAnimated = true;
+                        runCounterMetrics();
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+
+        scrollRevealElements.forEach(el => scrollObserver.observe(el));
+        if (counterSection) scrollObserver.observe(counterSection);
+
+        /* --- MOBILE MENU SELECTION LINK --- */
+        const mobileToggleBtn = document.getElementById('mobile-toggle');
+        const navLinksWrapper = document.querySelector('.nav-links');
+
+        mobileToggleBtn.addEventListener('click', () => {
+            if (navLinksWrapper.style.display === 'flex') {
+                navLinksWrapper.style.display = 'none';
+            } else {
+                navLinksWrapper.style.display = 'flex';
+                navLinksWrapper.style.flexDirection = 'column';
+                navLinksWrapper.style.position = 'absolute';
+                navLinksWrapper.style.top = '100%';
+                navLinksWrapper.style.left = '0';
+                navLinksWrapper.style.width = '100%';
+                navLinksWrapper.style.background = 'rgba(248, 251, 248, 0.95)';
+                navLinksWrapper.style.padding = '20px';
+                navLinksWrapper.style.boxShadow = '0 10px 20px rgba(0,0,0,0.05)';
+            }
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    navLinksWrapper.style.display = 'none';
+                }
+                document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        /* --- PREMIUM CARD MODAL LOGIC ENGINE --- */
+        const projectModal = document.getElementById('projectModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+
+        function openProjectModal(title, text) {
+            modalTitle.textContent = title;
+            modalDescription.textContent = text;
+            projectModal.style.display = 'flex';
+        }
+
+        function closeProjectModal() {
+            projectModal.style.display = 'none';
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === projectModal) closeProjectModal();
+        });
+
+        /* --- LIGHTBOX DISPLAY CONTROLLER --- */
+        const galleryLightbox = document.getElementById('galleryLightbox');
+        const lightboxImage = document.getElementById('lightboxImage');
+
+        function openLightbox(element) {
+            const targetedImageSrc = element.querySelector('img').src;
+            lightboxImage.src = targetedImageSrc;
+            galleryLightbox.style.display = 'flex';
+        }
+
+        function closeLightbox() {
+            galleryLightbox.style.display = 'none';
+        }
+
+        /* --- PORTFOLIO SLIDE MODAL ENGINE --- */
+        const slideModalObj = document.getElementById('slideModal');
+        const modalSlideImg = document.getElementById('modalSlide');
+
+        function openSlide(src) {
+            slideModalObj.style.display = 'flex';
+            modalSlideImg.src = src;
+        }
+
+        document.querySelector('#slideModal .close-modal').onclick = () => {
+            slideModalObj.style.display = 'none';
+        };
+
+        slideModalObj.onclick = (e) => {
+            if (e.target === slideModalObj) {
+                slideModalObj.style.display = 'none';
+            }
+        };
+
+        /* --- VIDEO AUTOPLAY OBSERVER --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            const vids = document.querySelectorAll('.autoplay-video');
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) { e.target.play().catch(() => {}); }
+                    else { e.target.pause(); }
+                });
+            }, { threshold: 0.5 });
+            vids.forEach(v => io.observe(v));
+        });
+    </script>
+</body>
+</html>
